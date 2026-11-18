@@ -6,7 +6,7 @@ from attention import SelfAttention
 
 class VAE_AttentionBlock(nn.Module):
     def __init__(self, channels: int):
-        super.__init__()
+        super().__init__()
         self.groupnorm = nn.GroupNorm(32, channels)
         self.attention = SelfAttention(1, channels)
 
@@ -40,7 +40,7 @@ class VAE_ResidualBlock(nn.Module):
         else:
             self.residual_layer = nn.Conv2d(in_channels, out_channels, kernel_size=1, padding=0)
 
-    def forward(self, x: torch.Tensot) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: (batch, in_channel, h, w)
         residue = x
         x = self.groupnorm_1(x)
@@ -85,7 +85,7 @@ class VAE_Decoder(nn.Sequential):
             nn.GroupNorm(32, 128),
             nn.SiLU(),
             # (batch, 3, h, w)
-            nn.Conv2d(128, 3, kernel_size=3, padding=1)
+            nn.Conv2d(128, 3, kernel_size=3, padding=1),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

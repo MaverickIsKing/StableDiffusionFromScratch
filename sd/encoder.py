@@ -5,7 +5,7 @@ from decoder import VAE_AttentionBlock, VAE_ResidualBlock
 
 class VAE_Encoder(nn.Sequential):
 
-    def __init__(self, *args):
+    def __init__(self):
         super().__init__(
             # (batch, channel, h, w) -> (batch, 128, h, w)
             nn.Conv2d(3, 128, kernel_size=3, padding=1),
@@ -44,8 +44,8 @@ class VAE_Encoder(nn.Sequential):
             # (batch, 512, h/8, w/8) -> (batch, 8, h/8, w/8)
             nn.Conv2d(512, 8, kernel_size=3, padding=1),
             # (batch, 512, h/8, w/8) -> (batch, 8, h/8, w/8)
-            nn.Conv2d(8, 8, kernel_size=1, padding=0)
-            )
+            nn.Conv2d(8, 8, kernel_size=1, padding=0),
+        )
 
     def forward(self, x: torch.Tensor, noise: torch.Tensor) -> torch.Tensor:
         # x: (batch, channel, h, w)
