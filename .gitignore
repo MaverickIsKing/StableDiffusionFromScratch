@@ -1,5 +1,8 @@
-./venv
+
 
 .vscode
 
+sd/__pycache__
+
 *.ckpt
+
