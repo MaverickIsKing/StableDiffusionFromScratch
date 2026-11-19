@@ -13,6 +13,7 @@ class VAE_AttentionBlock(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # x: (batch, features, h , w)
         residue = x
+        x = self.groupnorm(x)
         n, c, h, w = x.shape
         # (batch, features, h , w) -> (batch, features, h * w)
         x = x.view(n, c, h * w)

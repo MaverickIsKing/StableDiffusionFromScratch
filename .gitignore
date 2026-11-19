@@ -2,7 +2,9 @@
 .DS_Store
 .vscode
 
-sd/__pycache__
+**/__pycache__/
+
+*.pyc
 
 *.ckpt
 

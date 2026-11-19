@@ -19,7 +19,7 @@ class DDPMSampler:
         self.timesteps = torch.from_numpy(timesteps)
 
     def _get_previous_timestep(self, timestep: int) -> int:
-        prev_t = timestep - (self.num_inference_steps // self.num_inference_steps)
+        prev_t = timestep - (self.num_train_steps // self.num_inference_steps)
         return prev_t
 
     def _get_variance(self, timestep: int) -> torch.Tensor:
@@ -80,7 +80,7 @@ class DDPMSampler:
         while len(sqrt_alpha_prod.shape) < len(original_samples.shape):
             sqrt_alpha_prod = sqrt_alpha_prod.unsqueeze(-1)
 
-        sqrt_one_minus_alpha_prod = (1 - self.alphas_cumprod[timesteps]) ** 0.5 # std
+        sqrt_one_minus_alpha_prod = (1 - alphas_cumprod[timesteps]) ** 0.5 # std
         sqrt_one_minus_alpha_prod = sqrt_one_minus_alpha_prod.flatten()
         while len(sqrt_one_minus_alpha_prod.shape) < len(original_samples.shape):
             sqrt_one_minus_alpha_prod = sqrt_one_minus_alpha_prod.unsqueeze(-1)

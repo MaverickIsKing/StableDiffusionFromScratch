@@ -19,7 +19,7 @@ def generate(prompt: str, uncond_prompt: str, input_image=None, strength=0.8, do
 
         generator = torch.Generator(device=device)
         if seed is None:
-            generate.seed()
+            generator.seed()
         else:
             generator.manual_seed(seed)
 
@@ -67,7 +67,7 @@ def generate(prompt: str, uncond_prompt: str, input_image=None, strength=0.8, do
             input_image_tensor = input_image.resize((WIDTH, HEIGHT))
             input_image_tensor = np.array(input_image_tensor)
             # (height, width, channel)
-            input_image_tensor = torch.tensor(input_image_tensor, dtype=torch.float32)
+            input_image_tensor = torch.tensor(input_image_tensor, dtype=torch.float32, device=device)
             input_image_tensor = rescale(input_image_tensor, (0, 255), (-1, 1), clamp=True)
             # (batch, height, width, channel)
             input_image_tensor = input_image_tensor.unsqueeze(0)
