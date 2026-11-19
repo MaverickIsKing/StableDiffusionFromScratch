@@ -156,6 +156,7 @@ class UNET(nn.Module):
         self.decoders = nn.ModuleList([
             # (batch, 2560, h/64, w/64) -> (batch, 1280, h/64, w/64)
             SwitchSequential(UNET_ResidualBlock(2560, 1280)),
+            SwitchSequential(UNET_ResidualBlock(2560, 1280)),
             # (batch, 2560, h/64, w/64) -> (batch, 1280, h/32, w/32)
             SwitchSequential(UNET_ResidualBlock(2560, 1280), Upsample(1280)),
             SwitchSequential(UNET_ResidualBlock(2560, 1280), UNET_AttentionBlock(8, 160)),

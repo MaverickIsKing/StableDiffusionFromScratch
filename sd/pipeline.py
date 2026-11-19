@@ -26,17 +26,23 @@ def generate(prompt: str, uncond_prompt: str, input_image=None, strength=0.8, do
         clip = models["clip"]
         clip.to(device)
 
+        def tokenize(text):
+            return tokenizer(
+                [text],
+                padding="max_length",
+                truncation=True,
+                max_length=77,
+                return_tensors="pt",
+            ).input_ids.to(device=device)
+
         if do_cfg:
             # convert prompt to tokens
-            cond_tokens = tokenizer.batch_encode_plus([prompt], padding="max_length", max_length=77).input_ids
-            # batch, seq_len
-            cond_tokens = torch.tensor(cond_tokens, dtype=torch.long, device=device)
+            cond_tokens = tokenize(prompt)
             # batch, seq_len -> batch, seq_len, dim
             cond_context = clip(cond_tokens)
 
             # do the same for uncond_prompt
-            uncond_tokens = tokenizer.batch_encode_plus([uncond_prompt], padding="max_length", max_length=77).input_ids
-            uncond_tokens = torch.tensor(uncond_tokens, dtype=torch.long, device=device)
+            uncond_tokens = tokenize(uncond_prompt)
             uncond_context = clip(uncond_tokens)
 
             # (batch=2, seq_len, dim) = (2, 77, 768)
@@ -44,9 +50,7 @@ def generate(prompt: str, uncond_prompt: str, input_image=None, strength=0.8, do
 
         else:
             # convert prompt to tokens
-            tokens = tokenizer.batch_encode_plus([prompt], padding="max_length", max_length=77).input_ids
-            # batch, seq_len
-            tokens = torch.tensor(tokens, dtype=torch.long, device=device)
+            tokens = tokenize(prompt)
             # batch=1, (1, 77, 768)
             context = clip(tokens)
 
