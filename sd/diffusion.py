@@ -31,40 +31,22 @@ class UNET_ResidualBlock(nn.Module):
             self.residual_layer = nn.Conv2d(in_channels, out_channels, kernel_size=1, padding=0)
     
     def forward(self, feature, time):
-        # feature: (Batch_Size, In_Channels, Height, Width)
+        # feature: (batch, in_channel, h, w)
         # time: (1, 1280)
 
         residue = feature
-        
-        # (Batch_Size, In_Channels, Height, Width) -> (Batch_Size, In_Channels, Height, Width)
         feature = self.groupnorm_feature(feature)
-        
-        # (Batch_Size, In_Channels, Height, Width) -> (Batch_Size, In_Channels, Height, Width)
         feature = F.silu(feature)
-        
-        # (Batch_Size, In_Channels, Height, Width) -> (Batch_Size, Out_Channels, Height, Width)
         feature = self.conv_feature(feature)
         
-        # (1, 1280) -> (1, 1280)
         time = F.silu(time)
-
-        # (1, 1280) -> (1, Out_Channels)
         time = self.linear_time(time)
         
-        # Add width and height dimension to time. 
-        # (Batch_Size, Out_Channels, Height, Width) + (1, Out_Channels, 1, 1) -> (Batch_Size, Out_Channels, Height, Width)
         merged = feature + time.unsqueeze(-1).unsqueeze(-1)
-        
-        # (Batch_Size, Out_Channels, Height, Width) -> (Batch_Size, Out_Channels, Height, Width)
         merged = self.groupnorm_merged(merged)
-        
-        # (Batch_Size, Out_Channels, Height, Width) -> (Batch_Size, Out_Channels, Height, Width)
         merged = F.silu(merged)
-        
-        # (Batch_Size, Out_Channels, Height, Width) -> (Batch_Size, Out_Channels, Height, Width)
         merged = self.conv_merged(merged)
         
-        # (Batch_Size, Out_Channels, Height, Width) + (Batch_Size, Out_Channels, Height, Width) -> (Batch_Size, Out_Channels, Height, Width)
         return merged + self.residual_layer(residue)
 
 class UNET_AttentionBlock(nn.Module):
@@ -203,7 +185,7 @@ class UNET(nn.Module):
         x = self.bottleneck(x, context, time)
 
         for layers in self.decoders:
-            # Since we always concat with the skip connection of the encoder, the number of features increases before being sent to the decoder's layer
+            # concat skipped connections
             x = torch.cat((x, skip_connections.pop()), dim=1) 
             x = layers(x, context, time)
         
