@@ -1,1 +1,6 @@
 # StableDiffusionFromScratch
+
+## usage: 
+
+download vocab.json and merges.txt from https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/tree/main/tokenizer to the data folder
+Download v1-5-pruned-emaonly.ckpt from https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/tree/main to the data folder
